@@ -19,7 +19,7 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
 
         private void button1_Click(object sender, EventArgs e)
         {
-            BackgroundImage = DrawGraphik.CombienMethodChordAndTanged(40, 15, 400, 400);
+            BackgroundImage = DrawGraphik.MethodChord(DrawGraphik.Function(40, 15, 400, 400), -10, 3);
         }
 
         private void button1_Click_1(object sender, EventArgs e)

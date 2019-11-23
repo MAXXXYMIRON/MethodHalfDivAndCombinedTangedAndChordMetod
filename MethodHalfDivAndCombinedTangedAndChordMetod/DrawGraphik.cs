@@ -10,31 +10,38 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
 {
     static class DrawGraphik
     {
+        private static ushort Top, Left, Height, Width;
+
         /// <summary>
         /// Метод отрисовки координатной оси
         /// </summary>
-        /// <param name="Top">Расстояние сверху координатной плоскости от левого верхнего угла окна</param>
-        /// <param name="Left">Расстояние слево координатной плоскости от левого верхнего угла окна</param>
-        /// <param name="Height">Высота координатной плоскости</param>
-        /// <param name="Width">Ширина координатной плоскости</param>
-        public static Bitmap CoordinatePlane(ushort Top, ushort Left, ushort Height, ushort Width)
+        /// <param name="top">Расстояние сверху координатной плоскости от левого верхнего угла окна</param>
+        /// <param name="left">Расстояние слево координатной плоскости от левого верхнего угла окна</param>
+        /// <param name="height">Высота координатной плоскости</param>
+        /// <param name="width">Ширина координатной плоскости</param>
+        public static Bitmap CoordinatePlane(ushort top, ushort left, ushort height, ushort width)
         {
-            Bitmap bitmap = new Bitmap(Width + Left, Height + Top);
+            Top = top;
+            Left = left;
+            Height = height;
+            Width = width;
+
+            Bitmap bitmap = new Bitmap(width + left, height + top);
             Graphics graph = Graphics.FromImage(bitmap);
             Pen myPen = new Pen(Color.DimGray, 0.1f);
 
-            for (int i = Top; i <= Height + Top; i += Height / 20)
+            for (int i = top; i <= height + top; i += height / 20)
             {
-                graph.DrawLine(myPen, Left, i, Width + Left, i);
+                graph.DrawLine(myPen, left, i, width + left, i);
             }
-            for (int i = Left; i <= Width + Left; i += Width / 20)
+            for (int i = left; i <= width + left; i += width / 20)
             {
-                graph.DrawLine(myPen, i, Top, i, Height + Top);
+                graph.DrawLine(myPen, i, top, i, height + top);
             }
 
             myPen.Color = Color.Black;
-            graph.DrawLine(myPen, (Width / 2) + Left, Top, (Width / 2) + Left, Height + Top);
-            graph.DrawLine(myPen, Left, (Height / 2) + Top, Width + Left, (Height / 2) + Top);
+            graph.DrawLine(myPen, (width / 2) + left, top, (width / 2) + left, height + top);
+            graph.DrawLine(myPen, left, (height / 2) + top, width + left, (height / 2) + top);
 
             return bitmap;
         }
@@ -46,9 +53,9 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
         /// <param name="Left">Расстояние слево координатной плоскости от левого верхнего угла окна</param>
         /// <param name="Height">Высота координатной плоскости</param>
         /// <param name="Width">Ширина координатной плоскости</param>
-        public static Bitmap CombienMethodChordAndTanged(ushort Top, ushort Left, ushort Height, ushort Width)
+        public static Bitmap Function(ushort top, ushort left, ushort height, ushort width)
         {
-            CoordinatePlane(Top, Left, Height, Width);
+            CoordinatePlane(top, left, height, width);
 
             Bitmap bitmap = CoordinatePlane(Top, Left, Height, Width); 
             Graphics graph = Graphics.FromImage(bitmap);
@@ -72,6 +79,51 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
                 x0 = x;
                 y0 = y;
             }
+
+            return bitmap;
+        }
+
+        /// <summary>
+        /// Метод хорд для данной функции
+        /// </summary>
+        /// <param name="bitmap">Координатная плоскость с начерченным графиком</param>
+        /// <param name="a">Первая точка отрезка неопределенности, в котором хорда пересекется с Ох</param>
+        /// <param name="b">Вторая точка отрезка неопределенности, в котором хорда пересекется с Ох</param>
+        /// <returns>Полученный на вход парасетр bitmap с начерченными хордами</returns>
+        public static Bitmap MethodChord(Bitmap bitmap, float a, float b)
+        {
+            float Epsilon = 0.0001f;
+
+            Graphics graph = Graphics.FromImage(bitmap);
+            Pen myPen = new Pen(Color.Black, 0.5f);
+
+            graph.DrawLine(myPen, Left + ((Width / 40) + a) * 20,
+                      Height / 2 - Equation(a) + Top,
+                      Left + ((Width / 40) + b) * 20,
+                      Height / 2 - Equation(b) + Top);
+
+            float Cnew = 0, Cold = 0;
+
+            do
+            {
+                Cnew = (a * Equation(b) - b * Equation(a)) / (Equation(b) - Equation(a));
+                if (Equation(a) * Equation(Cnew) < 0)
+                {
+                    Cold = b;
+                    b = Cnew;
+                }
+                else if (Equation(b) * Equation(Cnew) < 0)
+                {
+                    Cold = a;
+                    a = Cnew;
+                }
+                graph.DrawLine(myPen, Left + ((Width / 40) + a) * 20,
+                Height / 2 - Equation(a) + Top,
+                Left + ((Width / 40) + b) * 20,
+                Height / 2 - Equation(b) + Top);
+
+            }
+            while (Math.Abs(Cold - Cnew) > Epsilon);
 
             return bitmap;
         }
