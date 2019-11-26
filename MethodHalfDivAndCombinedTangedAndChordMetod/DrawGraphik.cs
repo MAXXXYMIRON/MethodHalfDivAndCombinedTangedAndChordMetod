@@ -11,6 +11,7 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
     static class DrawGraphik
     {
         private static ushort Top, Left, Height, Width;
+        public static float Epsilon = 0.0001f;
 
         /// <summary>
         /// Метод отрисовки координатной оси
@@ -62,14 +63,14 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
             Pen myPen = new Pen(Color.Black, 0.5f);
 
             float x0 = (Width / -40),
-                  y0 = Equation(x0),
+                  y0 = Function(x0),
                   x = x0,
                   y = 0;
 
             for (int i = 0; i < Width; i++)
             {
                 x += 0.05f;
-                y = Equation(x);
+                y = Function(x);
 
                 graph.DrawLine(myPen, Left + ((Width / 40) + x0) * 20, 
                                       Height / 2 - y0 + Top, 
@@ -92,35 +93,33 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
         /// <returns>Полученный на вход парасетр bitmap с начерченными хордами</returns>
         public static Bitmap MethodChord(Bitmap bitmap, float a, float b)
         {
-            float Epsilon = 0.0001f;
-
             Graphics graph = Graphics.FromImage(bitmap);
             Pen myPen = new Pen(Color.Black, 0.5f);
 
             graph.DrawLine(myPen, Left + ((Width / 40) + a) * 20,
-                      Height / 2 - Equation(a) + Top,
+                      Height / 2 - Function(a) + Top,
                       Left + ((Width / 40) + b) * 20,
-                      Height / 2 - Equation(b) + Top);
+                      Height / 2 - Function(b) + Top);
 
             float Cnew = 0, Cold = 0;
 
             do
             {
-                Cnew = (a * Equation(b) - b * Equation(a)) / (Equation(b) - Equation(a));
-                if (Equation(a) * Equation(Cnew) < 0)
+                Cnew = (a * Function(b) - b * Function(a)) / (Function(b) - Function(a));
+                if (Function(a) * Function(Cnew) < 0)
                 {
                     Cold = b;
                     b = Cnew;
                 }
-                else if (Equation(b) * Equation(Cnew) < 0)
+                else if (Function(b) * Function(Cnew) < 0)
                 {
                     Cold = a;
                     a = Cnew;
                 }
                 graph.DrawLine(myPen, Left + ((Width / 40) + a) * 20,
-                Height / 2 - Equation(a) + Top,
+                Height / 2 - Function(a) + Top,
                 Left + ((Width / 40) + b) * 20,
-                Height / 2 - Equation(b) + Top);
+                Height / 2 - Function(b) + Top);
 
             }
             while (Math.Abs(Cold - Cnew) > Epsilon);
@@ -128,10 +127,61 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
             return bitmap;
         }
 
-        public static float Equation(float x0)
+        /// <summary>
+        /// Метод косательных для данной функции
+        /// </summary>
+        /// <param name="bitmap">Координатная плоскость с начерченным графиком</param>
+        /// <param name="a">Первая точка отрезка неопределенности</param>
+        /// <param name="b">Вторая точка отрезка неопределенности</param>
+        /// <returns>Полученный на вход парасетр bitmap с начерченными косательными</returns>
+        public static Bitmap MethodTanget(Bitmap bitmap, float a, float b)
+        { 
+            Graphics graph = Graphics.FromImage(bitmap);
+            Pen myPen = new Pen(Color.Black, 0.5f);
+
+            float Cold = 0, d = 0;
+
+            do
+            {
+                if (Function(a) * TwoDeriativeFunction(a) > 0)
+                {
+                    Cold = a;
+                    d = a - Function(a) / DeriativeFunction(a);
+                    a = d;
+                }
+                else if (Function(b) * TwoDeriativeFunction(b) > 0)
+                {
+                    Cold = b;
+                    d = b - Function(b) / DeriativeFunction(b);
+                    b = d;
+                }
+                graph.DrawLine(myPen, Left + ((Width / 40) + Cold) * 20,
+                Height / 2 - Function(Cold) + Top,
+                Left + ((Width / 40) + d) * 20,
+                Height / 2 + Top);
+            }
+            while (Math.Abs(Cold - d) > Epsilon);
+
+            return bitmap;
+        }
+
+        public static float Function(float x0)
         {
             return (float)((3 * x0) + Math.Pow(5, x0) + 6);
             //return 4 * x0 * x0 * x0 - 5 * x0 * x0 - 2 * x0 + 2;
+        }
+
+        public static float DeriativeFunction(float x0)
+        {
+            return (float)(Math.Pow(5, x0) * Math.Log(5) + 3);
+            //return (float)(12 * x0 * x0 - 10 * x0 - 2);
+
+        }
+
+        public static float TwoDeriativeFunction(float x0)
+        {
+            return (float)(Math.Pow(5, x0) * Math.Pow(Math.Log(5), 2));
+            //return (float)(24 * x0 - 10);
         }
     }
 }
