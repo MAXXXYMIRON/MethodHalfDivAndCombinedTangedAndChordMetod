@@ -91,7 +91,7 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
         /// <param name="a">Первая точка отрезка неопределенности, в котором хорда пересекется с Ох</param>
         /// <param name="b">Вторая точка отрезка неопределенности, в котором хорда пересекется с Ох</param>
         /// <returns>Полученный на вход парасетр bitmap с начерченными хордами</returns>
-        public static Bitmap MethodChord(Bitmap bitmap, float a, float b)
+        public static Bitmap MethodChord(Bitmap bitmap, ref float a, ref float b)
         {
             Graphics graph = Graphics.FromImage(bitmap);
             Pen myPen = new Pen(Color.Black, 0.5f);
@@ -102,6 +102,7 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
                       Height / 2 - Function(b) + Top);
 
             float Cnew = 0, Cold = 0;
+            ushort iter = 1;
 
             do
             {
@@ -121,8 +122,12 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
                 Left + ((Width / 40) + b) * 20,
                 Height / 2 - Function(b) + Top);
 
+                iter++;
             }
             while (Math.Abs(Cold - Cnew) > Epsilon);
+
+            a = iter;
+            b = Cnew;
 
             return bitmap;
         }
@@ -134,12 +139,13 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
         /// <param name="a">Первая точка отрезка неопределенности</param>
         /// <param name="b">Вторая точка отрезка неопределенности</param>
         /// <returns>Полученный на вход парасетр bitmap с начерченными косательными</returns>
-        public static Bitmap MethodTanget(Bitmap bitmap, float a, float b)
+        public static Bitmap MethodTanget(Bitmap bitmap, ref float a, ref float b)
         { 
             Graphics graph = Graphics.FromImage(bitmap);
             Pen myPen = new Pen(Color.Black, 0.5f);
 
             float Cold = 0, d = 0;
+            ushort iter = 0;
 
             do
             {
@@ -159,29 +165,34 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
                 Height / 2 - Function(Cold) + Top,
                 Left + ((Width / 40) + d) * 20,
                 Height / 2 + Top);
+
+                iter++;
             }
             while (Math.Abs(Cold - d) > Epsilon);
+
+            a = iter;
+            b = d;
 
             return bitmap;
         }
 
         public static float Function(float x0)
         {
-            return (float)((3 * x0) + Math.Pow(5, x0) + 6);
-            //return 4 * x0 * x0 * x0 - 5 * x0 * x0 - 2 * x0 + 2;
+            //return (float)((3 * x0) + Math.Pow(5, x0) + 6);
+            return 4 * x0 * x0 * x0 - 5 * x0 * x0 - 2 * x0 + 2;
         }
 
         public static float DeriativeFunction(float x0)
         {
-            return (float)(Math.Pow(5, x0) * Math.Log(5) + 3);
-            //return (float)(12 * x0 * x0 - 10 * x0 - 2);
+            //return (float)(Math.Pow(5, x0) * Math.Log(5) + 3);
+            return (float)(12 * x0 * x0 - 10 * x0 - 2);
 
         }
 
         public static float TwoDeriativeFunction(float x0)
         {
-            return (float)(Math.Pow(5, x0) * Math.Pow(Math.Log(5), 2));
-            //return (float)(24 * x0 - 10);
+            //return (float)(Math.Pow(5, x0) * Math.Pow(Math.Log(5), 2));
+            return (float)(24 * x0 - 10);
         }
     }
 }
