@@ -169,6 +169,7 @@
             this.CombinedMeth.TabIndex = 5;
             this.CombinedMeth.Text = "Комбинированный метод";
             this.CombinedMeth.UseVisualStyleBackColor = false;
+            this.CombinedMeth.Click += new System.EventHandler(this.CombinedMeth_Click);
             // 
             // A
             // 
@@ -236,6 +237,7 @@
             this.MethHalfDiv.TabIndex = 10;
             this.MethHalfDiv.Text = "Метод полвинного деления";
             this.MethHalfDiv.UseVisualStyleBackColor = false;
+            this.MethHalfDiv.Click += new System.EventHandler(this.MethHalfDiv_Click);
             // 
             // MethSimpleIter
             // 

@@ -88,8 +88,8 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
         /// Метод хорд для данной функции
         /// </summary>
         /// <param name="bitmap">Координатная плоскость с начерченным графиком</param>
-        /// <param name="a">Первая точка отрезка неопределенности, в котором хорда пересекется с Ох</param>
-        /// <param name="b">Вторая точка отрезка неопределенности, в котором хорда пересекется с Ох</param>
+        /// <param name="a">Первая точка отрезка неопределенности, вернет кол-во итераций</param>
+        /// <param name="b">Вторая точка отрезка неопределенности, вернет приближенное решение уравнения</param>
         /// <returns>Полученный на вход парасетр bitmap с начерченными хордами</returns>
         public static Bitmap MethodChord(Bitmap bitmap, ref float a, ref float b)
         {
@@ -117,6 +117,8 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
                     Cold = a;
                     a = Cnew;
                 }
+                else return bitmap;
+
                 graph.DrawLine(myPen, Left + ((Width / 40) + a) * 20,
                 Height / 2 - Function(a) + Top,
                 Left + ((Width / 40) + b) * 20,
@@ -136,8 +138,8 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
         /// Метод косательных для данной функции
         /// </summary>
         /// <param name="bitmap">Координатная плоскость с начерченным графиком</param>
-        /// <param name="a">Первая точка отрезка неопределенности</param>
-        /// <param name="b">Вторая точка отрезка неопределенности</param>
+        /// <param name="a">Первая точка отрезка неопределенности, вернет кол-во итераций</param>
+        /// <param name="b">Вторая точка отрезка неопределенности, вернет приближенное решение уравнения</param>
         /// <returns>Полученный на вход парасетр bitmap с начерченными косательными</returns>
         public static Bitmap MethodTanget(Bitmap bitmap, ref float a, ref float b)
         { 
@@ -176,23 +178,130 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
             return bitmap;
         }
 
+        /// <summary>
+        /// Комбинированный метод хорд и косательных
+        /// </summary>
+        /// <param name="bitmap">Координатная плоскость с начерченным графиком</param>
+        /// <param name="a">Первая точка отрезка неопределенности, вернет кол-во итераций</param>
+        /// <param name="b">Вторая точка отрезка неопределенности, вернет приближенное решение уравнения</param>
+        /// <returns>Полученный на вход парасетр bitmap с начерченными косательными</returns>
+        public static Bitmap MethodCombined(Bitmap bitmap, ref float a, ref float b)
+        {
+            Graphics graph = Graphics.FromImage(bitmap);
+            Pen myPen = new Pen(Color.Black, 0.5f);
+            float c = 0, d = 0, Cold = 0, Dold = 0;
+            ushort iter = 0;
+
+            if (Function(a) * TwoDeriativeFunction(a) > 0)
+            {
+                Cold = a;
+                Dold = a;
+            }
+
+            else if (Function(b) * TwoDeriativeFunction(b) > 0)
+            {
+                Cold = b;
+                Dold = b;
+            }
+
+
+            while (Math.Abs(b - a) > 2 * Epsilon)
+            {
+                c = (a * Function(b) - b * Function(a)) / (Function(b) - Function(a));
+
+                if (Function(a) * TwoDeriativeFunction(a) > 0)
+                {
+                    Dold = a;
+                    d = a - Function(a) / DeriativeFunction(a);
+                    a = d;
+                    b = c;
+                }
+                else if(Function(b) * TwoDeriativeFunction(b) > 0)
+                {
+                    Dold = b;
+                    d = b - Function(b) / DeriativeFunction(b);
+                    b = d;
+                    a = c;
+                }
+
+                //Построеие хорд
+                graph.DrawLine(myPen, Left + ((Width / 40) + Dold) * 20,
+                Height / 2 - Function(Dold) + Top,
+                Left + ((Width / 40) + c) * 20,
+                Height / 2 - Function(c) + Top);
+
+                //Построение косательной
+                graph.DrawLine(myPen, Left + ((Width / 40) + Dold) * 20,
+                Height / 2 - Function(Dold) + Top,
+                Left + ((Width / 40) + d) * 20,
+                Height / 2 + Top);
+
+                iter++;
+            }
+
+            b = a;
+            a = iter;
+
+
+            return bitmap;
+        }
+
+        /// <summary>
+        /// Метод половинного деления
+        /// </summary>
+        /// <param name="bitmap">Координатная плоскость с начерченным графиком</param>
+        /// <param name="a">Первая точка отрезка неопределенности, вернет кол-во итераций</param>
+        /// <param name="b">Вторая точка отрезка неопределенности, вернет приближенное решение уравнения</param>
+        /// <returns>Полученный на вход парасетр bitmap с начерченными косательными</returns>
+        public static Bitmap MethodHalfDiv(Bitmap bitmap, ref float a, ref float b)
+        {
+            Graphics graph = Graphics.FromImage(bitmap);
+            Pen myPen = new Pen(Color.Black, 0.5f);
+            float c = 0;
+            ushort iter = 0;
+
+            while (Math.Abs(b - a) >  2 * Epsilon)
+            {
+                c = (a + b) / 2;
+
+                if(Function(a) * Function(c) < 0)
+                {
+                    b = c;
+                }
+                else if(Function(b) * Function(c) < 0)
+                {
+                    a = c;
+                }
+                graph.DrawLine(myPen, Left + ((Width / 40) + c) * 20,
+                Height / 2 - Function(c) - 4 + Top,
+                Left + ((Width / 40) + c) * 20,
+                Height / 2 - Function(c) + 4 + Top);
+
+                iter++;
+            }
+
+            b = c;
+            a = iter;
+
+            return bitmap;
+        }
+
         public static float Function(float x0)
         {
-            //return (float)((3 * x0) + Math.Pow(5, x0) + 6);
-            return 4 * x0 * x0 * x0 - 5 * x0 * x0 - 2 * x0 + 2;
+            return (float)((3 * x0) + Math.Pow(5, x0) + 6);
+            //return 4 * x0 * x0 * x0 - 5 * x0 * x0 - 2 * x0 + 2;
         }
 
         public static float DeriativeFunction(float x0)
         {
-            //return (float)(Math.Pow(5, x0) * Math.Log(5) + 3);
-            return (float)(12 * x0 * x0 - 10 * x0 - 2);
-
+            return (float)(Math.Pow(5, x0) * Math.Log(5) + 3);
+            //return (float)(12 * x0 * x0 - 10 * x0 - 2);
         }
 
         public static float TwoDeriativeFunction(float x0)
         {
-            //return (float)(Math.Pow(5, x0) * Math.Pow(Math.Log(5), 2));
-            return (float)(24 * x0 - 10);
+            return (float)(Math.Pow(5, x0) * Math.Pow(Math.Log(5), 2));
+            //return (float)(24 * x0 - 10);
         }
     }
 }
