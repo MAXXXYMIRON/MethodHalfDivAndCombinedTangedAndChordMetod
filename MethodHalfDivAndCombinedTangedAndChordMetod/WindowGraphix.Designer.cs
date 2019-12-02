@@ -258,6 +258,7 @@
             this.MethSimpleIter.TabIndex = 11;
             this.MethSimpleIter.Text = "Метод простых итераций";
             this.MethSimpleIter.UseVisualStyleBackColor = false;
+            this.MethSimpleIter.Click += new System.EventHandler(this.MethSimpleIter_Click);
             // 
             // Result
             // 

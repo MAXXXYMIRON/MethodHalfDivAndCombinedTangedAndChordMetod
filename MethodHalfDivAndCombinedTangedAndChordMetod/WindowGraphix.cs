@@ -108,17 +108,39 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
 
         private void MethHalfDiv_Click(object sender, EventArgs e)
         {
-            Result.Text = "f(x) = 0 ";
-            NumberIteration.Text = "Итераций -  ?";
+            if (GetAandB())
+            {
+                Result.Text = "f(x) = 0 ";
+                NumberIteration.Text = "Итераций -  ?";
 
-            float a = Convert.ToSingle(A.Text),
-                b = Convert.ToSingle(B.Text);
-            BackgroundImage = DrawGraphik.MethodHalfDiv(DrawGraphik.Function(40, 15, 400, 400), ref a, ref b);
-            Result.Text = Result.Text.Remove(2, 1);
-            Result.Text = Result.Text.Insert(2, b.ToString());
+                float a = Convert.ToSingle(A.Text),
+                    b = Convert.ToSingle(B.Text);
+                BackgroundImage = DrawGraphik.MethodHalfDiv(DrawGraphik.Function(40, 15, 400, 400), ref a, ref b);
+                Result.Text = Result.Text.Remove(2, 1);
+                Result.Text = Result.Text.Insert(2, b.ToString());
 
-            NumberIteration.Text = NumberIteration.Text.Remove(NumberIteration.Text.Length - 1);
-            NumberIteration.Text = NumberIteration.Text.Insert(NumberIteration.Text.Length - 1, a.ToString());
+                NumberIteration.Text = NumberIteration.Text.Remove(NumberIteration.Text.Length - 1);
+                NumberIteration.Text = NumberIteration.Text.Insert(NumberIteration.Text.Length - 1, a.ToString()); 
+            }
+        }
+
+        private void MethSimpleIter_Click(object sender, EventArgs e)
+        {
+            if (GetAandB())
+            {
+                Result.Text = "f(x) = 0 ";
+                NumberIteration.Text = "Итераций -  ?";
+
+                float a = Convert.ToSingle(A.Text),
+                    b = Convert.ToSingle(B.Text);
+                DrawGraphik.MethodSimpleIteration(ref a, ref b);
+
+                Result.Text = Result.Text.Remove(2, 1);
+                Result.Text = Result.Text.Insert(2, b.ToString());
+
+                NumberIteration.Text = NumberIteration.Text.Remove(NumberIteration.Text.Length - 1);
+                NumberIteration.Text = NumberIteration.Text.Insert(NumberIteration.Text.Length - 1, a.ToString()); 
+            }
         }
     }
 }

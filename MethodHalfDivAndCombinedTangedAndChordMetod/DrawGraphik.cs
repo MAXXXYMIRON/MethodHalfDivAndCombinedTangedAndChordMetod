@@ -135,6 +135,27 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
         }
 
         /// <summary>
+        /// Метод простых итераций для данной функции
+        /// </summary>
+        /// <param name="a">Начальная точка отрезка неопределенности, вернет кол-во итераций</param>
+        /// <param name="b">Любая точка отрезка неопределенности, вернет приближенное решение уравнения</param>
+        public static void MethodSimpleIteration(ref float a, ref float b)
+        {
+            float Xold = a, Xnew = FunctionH(Xold);
+            ushort iter = 1;
+
+            while(Math.Abs(Xnew - Xold) > Epsilon)
+            {
+                Xold = Xnew;
+                Xnew = FunctionH(Xold);
+                iter++;
+            }
+
+            a = iter;
+            b = Xnew;
+        }
+
+        /// <summary>
         /// Метод косательных для данной функции
         /// </summary>
         /// <param name="bitmap">Координатная плоскость с начерченным графиком</param>
@@ -288,20 +309,28 @@ namespace MethodHalfDivAndCombinedTangedAndChordMetod
 
         public static float Function(float x0)
         {
-            return (float)((3 * x0) + Math.Pow(5, x0) + 6);
+            return 1 - x0 - (x0 * x0) / 5;
+            //return (float)((3 * x0) + Math.Pow(5, x0) + 6);
             //return 4 * x0 * x0 * x0 - 5 * x0 * x0 - 2 * x0 + 2;
         }
 
         public static float DeriativeFunction(float x0)
         {
-            return (float)(Math.Pow(5, x0) * Math.Log(5) + 3);
+            return -2 * (x0 / 5) -1;
+            //return (float)(Math.Pow(5, x0) * Math.Log(5) + 3);
             //return (float)(12 * x0 * x0 - 10 * x0 - 2);
         }
 
         public static float TwoDeriativeFunction(float x0)
         {
-            return (float)(Math.Pow(5, x0) * Math.Pow(Math.Log(5), 2));
+            return -0.4f;
+            //return (float)(Math.Pow(5, x0) * Math.Pow(Math.Log(5), 2));
             //return (float)(24 * x0 - 10);
+        }
+
+        public static float FunctionH(float x0)
+        {
+            return 1 - (x0 * x0) / 5;
         }
     }
 }
